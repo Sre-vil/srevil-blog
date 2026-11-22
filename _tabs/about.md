@@ -19,7 +19,6 @@ order: 4
 
 - 블로그 주소: <https://srevil.com>
 - GitHub: [Sre-vil](https://github.com/Sre-vil)
-- 문의: [문의 페이지](/contact/)를 참고해 주세요.
 - 개인정보 및 광고 관련 안내: [개인정보처리방침](/privacy/)
 
 ## 광고 안내

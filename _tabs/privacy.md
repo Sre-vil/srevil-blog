@@ -45,4 +45,4 @@ order: 5
 
 ## 7. 문의
 
-개인정보와 관련한 문의는 [문의 페이지](/contact/)를 참고해 주세요.
+개인정보와 관련한 문의는 [GitHub 리포지토리 이슈](https://github.com/Sre-vil/srevil-blog/issues/new)에 남겨 주세요. 이슈는 공개되므로 개인정보는 적지 말아 주세요.
