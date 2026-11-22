@@ -4,5 +4,25 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-> Add Markdown syntax content to file `_tabs/about.md`{: .filepath } and it will show up on this page.
-{: .prompt-tip }
+## 소개
+
+이 블로그는 Srevil이 직접 배우고 만든 것들을 기록하고 정리하기 위해 운영하는 공간입니다.
+작성한 글은 개인의 경험과 학습 내용을 바탕으로 하며, 시간이 지나 내용이 달라지면 수정하거나 보완합니다.
+
+## 이 블로그에서 다루는 것
+
+- 직접 해 보면서 정리한 방법과 설정 과정
+- 문제를 만났을 때 원인을 찾고 해결한 기록
+- 배운 내용을 다시 찾아보기 쉽게 정리한 노트
+
+## 운영 정보
+
+- 블로그 주소: <https://srevil-github.srevil.com>
+- GitHub: [Sre-vil](https://github.com/Sre-vil)
+- 문의: [문의 페이지](/contact/)를 참고해 주세요.
+- 개인정보 및 광고 관련 안내: [개인정보처리방침](/privacy/)
+
+## 광고 안내
+
+이 블로그는 운영 비용을 보충하기 위해 Google AdSense 광고를 게재할 수 있습니다.
+광고는 콘텐츠 내용과 별개로 표시되며, 광고 관련 자세한 내용은 [개인정보처리방침](/privacy/)에서 확인할 수 있습니다.

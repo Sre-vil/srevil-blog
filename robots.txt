@@ -1,0 +1,12 @@
+---
+permalink: /robots.txt
+# The following lines are required by Jekyll to process this file.
+---
+
+User-agent: *
+Allow: /
+
+User-agent: Mediapartners-Google
+Allow: /
+
+Sitemap: {{ '/sitemap.xml' | absolute_url }}
