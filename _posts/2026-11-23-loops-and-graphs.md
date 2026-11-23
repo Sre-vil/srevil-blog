@@ -2,7 +2,7 @@
 title: "Loops & Graphs: 마지막 한 단계만 승인하기"
 date: 2026-11-23 00:38:00 +0900
 tags: [에이전트, Claude Code, 기록]
-description: 사람은 에이전트 작업의 모든 단계를 지켜볼 필요가 없습니다. 되돌리기 어렵고 영향이 큰 한 단계만 승인하면 됩니다. Hanako의 “Loops and Graphs”를 읽고 정리했습니다.
+description: Hanako의 “Loops and Graphs”를 읽고, 사람은 영향이 큰 한 단계만 승인하면 된다는 이야기를 정리했습니다.
 permalink: /posts/loops-and-graphs/
 lg_guide: true
 lang: ko

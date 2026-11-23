@@ -2,7 +2,7 @@
 title: "Loops & Graphs: Approve Only the Last Hard Step"
 date: 2026-11-23 00:38:00 +0900
 tags: [agents, Claude Code, notes]
-description: You don't need to watch every step an agent takes. The useful place for a human is the step that's hard to undo and costly if it goes wrong. Notes from reading Hanako's “Loops and Graphs.”
+description: Notes from reading Hanako's “Loops and Graphs.” The useful place for a human is the step that's hard to undo.
 permalink: /en/posts/loops-and-graphs/
 lg_guide: true
 lang: en
