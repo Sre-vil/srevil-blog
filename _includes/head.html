@@ -1,0 +1,15 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0b0f">
+<!-- Google AdSense -->
+<meta name="google-adsense-account" content="ca-pub-7596956591156758">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7596956591156758" crossorigin="anonymous"></script>
+{% seo %}
+{% feed_meta %}
+<link rel="icon" type="image/svg+xml" href="{{ '/assets/img/favicon.svg' | relative_url }}">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/assets/css/night.css' | relative_url }}">
+{%- if page.layout == 'home' %}
+<script>try{var q=location.search;if(/intro=0/.test(q)||(sessionStorage.getItem('introSeen')&&!/intro=1/.test(q)))document.documentElement.className+=' intro-skip'}catch(e){}</script>
+{%- endif %}

@@ -1,7 +1,8 @@
 ---
+layout: page
 title: 개인정보처리방침
-icon: fas fa-shield-alt
-order: 5
+permalink: /privacy/
+description: Srevil Blog 개인정보처리방침과 광고·쿠키 안내
 ---
 
 최종 수정일: 2026-11-22

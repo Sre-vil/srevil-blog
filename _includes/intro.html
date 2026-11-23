@@ -1,0 +1,15 @@
+<div id="intro" role="presentation" data-title="Srevil Blog">
+  <canvas id="stars"></canvas>
+  <div class="stage">
+    <div class="duo">
+      <div class="icon grok">{% include grok.html uid="intro" %}</div>
+      <span class="x">×</span><div class="ring"></div><div class="spark"></div>
+      <div class="icon claude">{% include claude.html %}</div>
+    </div>
+    <div class="term">
+      <div class="line"><span class="prompt">&gt;</span><span id="typed"></span><span class="cursor"></span></div>
+      <div class="tagline" id="tagline">{{ site.tagline }}</div>
+    </div>
+  </div>
+  <button class="skip" id="skip" type="button">skip ↵</button>
+</div>

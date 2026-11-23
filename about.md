@@ -1,7 +1,8 @@
 ---
-# the default layout is 'page'
-icon: fas fa-info-circle
-order: 4
+layout: page
+title: 소개
+permalink: /about/
+description: Srevil Blog는 직접 배우고 만든 것들을 기록하고 정리하는 공간입니다.
 ---
 
 ## 소개

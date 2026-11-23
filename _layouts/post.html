@@ -1,0 +1,20 @@
+---
+layout: default
+---
+<div class="progress" id="pg" aria-hidden="true"></div>
+<article class="page-wrap wrap-narrow">
+  <header class="post-head">
+    <div class="meta">
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y.%m.%d" }}</time>
+      {%- for t in page.tags %}<span class="tag">{{ t }}</span>{% endfor %}
+      {%- assign chars = content | strip_html | size %}<span>{{ chars | divided_by: 500 | plus: 1 }}분 읽기</span>
+    </div>
+    <h1>{{ page.title }}</h1>
+    {%- if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}
+  </header>
+  <div class="prose">{{ content }}</div>
+  <nav class="pn" aria-label="이전/다음 글">
+    {%- if page.previous %}<a href="{{ page.previous.url | relative_url }}"><small>← 이전 글</small>{{ page.previous.title }}</a>{% else %}<span></span>{% endif %}
+    {%- if page.next %}<a class="r" href="{{ page.next.url | relative_url }}"><small>다음 글 →</small>{{ page.next.title }}</a>{% else %}<span></span>{% endif %}
+  </nav>
+</article>

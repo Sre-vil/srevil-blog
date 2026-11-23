@@ -1,0 +1,43 @@
+---
+layout: default
+---
+<div class="wrap">
+  <section class="hero">
+    <div class="kicker">&gt; night log · {{ site.time | date: "%Y" }}</div>
+    <h1>Srevil<span>_</span>Blog</h1>
+    <p>{{ site.tagline }}. 밤사이 쌓인 메모를 한 편의 글로 옮겨 적는 곳입니다.</p>
+  </section>
+
+  {%- assign posts = site.posts -%}
+  {%- if posts.size == 0 %}
+  <section class="empty glass">
+    <div class="empty-icons">{% include duo.html uid="empty" size=44 %}</div>
+    <h2>아직 글이 없습니다</h2>
+    <p>첫 기록을 준비하고 있어요. 곧 이곳에 밤사이 정리한 글이 하나씩 쌓입니다.</p>
+    <a class="btn" href="{{ '/about/' | relative_url }}">이 블로그 소개 보기</a>
+  </section>
+  {%- else %}
+  {%- assign f = posts.first %}
+  <div class="sec-h">Latest</div>
+  <a class="feature glass" href="{{ f.url | relative_url }}">
+    <div class="art">{% include duo.html uid="feat" size=28 %}</div>
+    <div class="txt">
+      <div class="meta"><time datetime="{{ f.date | date_to_xmlschema }}">{{ f.date | date: "%Y.%m.%d" }}</time>{% for t in f.tags %}<span class="tag">{{ t }}</span>{% endfor %}</div>
+      <h2>{{ f.title }}</h2>
+      <p>{{ f.description | default: f.excerpt | strip_html | truncate: 120 }}</p>
+    </div>
+  </a>
+  {%- if posts.size > 1 %}
+  <div class="sec-h" style="margin-top:56px">Archive</div>
+  <div class="grid">
+    {%- for p in posts offset: 1 %}
+    <a class="card glass" href="{{ p.url | relative_url }}">
+      <div class="meta"><time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%Y.%m.%d" }}</time>{% for t in p.tags %}<span class="tag">{{ t }}</span>{% endfor %}</div>
+      <h3>{{ p.title }}</h3>
+      <p>{{ p.description | default: p.excerpt | strip_html | truncate: 100 }}</p>
+    </a>
+    {%- endfor %}
+  </div>
+  {%- endif %}
+  {%- endif %}
+</div>

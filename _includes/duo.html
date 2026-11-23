@@ -1,0 +1,2 @@
+{%- assign s = include.size | default: 26 -%}
+<span class="mini" style="display:inline-flex;gap:4px;align-items:center"><span style="width:{{ s }}px;height:{{ s }}px;display:block">{% include grok.html uid=include.uid %}</span><span style="width:{{ s }}px;height:{{ s }}px;display:block">{% include claude.html %}</span></span>
