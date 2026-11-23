@@ -2,7 +2,7 @@
 layout: default
 ---
 <div class="progress" id="pg" aria-hidden="true"></div>
-<article class="page-wrap wrap-narrow">
+<article class="page-wrap wrap-narrow{% if page.lg_guide %} wrap-wide{% endif %}">
   <header class="post-head">
     <div class="meta">
       <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y.%m.%d" }}</time>

@@ -12,5 +12,8 @@
 </main>
 {% include footer.html %}
 <script src="{{ '/assets/js/night.js' | relative_url }}"></script>
+{%- if page.lg_guide %}
+<script src="{{ '/assets/js/lg-guide.js' | relative_url }}" defer></script>
+{%- endif %}
 </body>
 </html>

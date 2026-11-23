@@ -10,6 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ '/assets/css/night.css' | relative_url }}">
+{%- if page.lg_guide %}
+<link rel="stylesheet" href="{{ '/assets/css/lg-guide.css' | relative_url }}">
+{%- endif %}
 {%- if page.layout == 'home' %}
 <script>try{var q=location.search;if(/intro=0/.test(q)||(sessionStorage.getItem('introSeen')&&!/intro=1/.test(q)))document.documentElement.className+=' intro-skip'}catch(e){}</script>
 {%- endif %}
