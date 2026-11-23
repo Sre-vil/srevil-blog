@@ -7,14 +7,27 @@ layout: default
     <div class="meta">
       <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y.%m.%d" }}</time>
       {%- for t in page.tags %}<span class="tag">{{ t }}</span>{% endfor %}
-      {%- assign chars = content | strip_html | size %}<span>{{ chars | divided_by: 500 | plus: 1 }}분 읽기</span>
+      {% include lang-utils.html %}{%- assign chars = content | strip_html | size %}<span>{{ chars | divided_by: 500 | plus: 1 }}{% if cur_lang == "en" %} {% endif %}{{ t.min_read }}</span>
     </div>
     <h1>{{ page.title }}</h1>
     {%- if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}
   </header>
   <div class="prose">{{ content }}</div>
-  <nav class="pn" aria-label="이전/다음 글">
-    {%- if page.previous %}<a href="{{ page.previous.url | relative_url }}"><small>← 이전 글</small>{{ page.previous.title }}</a>{% else %}<span></span>{% endif %}
-    {%- if page.next %}<a class="r" href="{{ page.next.url | relative_url }}"><small>다음 글 →</small>{{ page.next.title }}</a>{% else %}<span></span>{% endif %}
+  {%- assign prev_p = nil -%}
+  {%- assign next_p = nil -%}
+  {%- for p in site.posts -%}
+    {%- assign p_lang = p.lang | default: 'ko' -%}
+    {%- if p_lang == cur_lang and p.url != page.url -%}
+      {%- if p.date < page.date -%}
+        {%- if prev_p == nil or p.date > prev_p.date -%}{%- assign prev_p = p -%}{%- endif -%}
+      {%- endif -%}
+      {%- if p.date > page.date -%}
+        {%- if next_p == nil or p.date < next_p.date -%}{%- assign next_p = p -%}{%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+  <nav class="pn" aria-label="{{ t.prev }} / {{ t.next }}">
+    {%- if prev_p %}<a href="{{ prev_p.url | relative_url }}"><small>← {{ t.prev }}</small>{{ prev_p.title }}</a>{% else %}<span></span>{% endif %}
+    {%- if next_p %}<a class="r" href="{{ next_p.url | relative_url }}"><small>{{ t.next }} →</small>{{ next_p.title }}</a>{% else %}<span></span>{% endif %}
   </nav>
 </article>

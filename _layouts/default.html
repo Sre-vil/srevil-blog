@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="{{ site.lang | default: 'ko-KR' }}">
+{%- assign cur_lang = page.lang | default: 'ko' -%}
+<html lang="{% if cur_lang == 'en' %}en{% else %}ko{% endif %}">
 <head>
 {% include head.html %}
 </head>

@@ -1,0 +1,31 @@
+{%- assign cur_lang = page.lang | default: 'ko' -%}
+{%- if cur_lang == 'en' -%}
+  {%- assign alt_lang = 'ko' -%}
+  {%- assign path_prefix = '/en' -%}
+{%- else -%}
+  {%- assign alt_lang = 'en' -%}
+  {%- assign path_prefix = '' -%}
+{%- endif -%}
+{%- assign t = site.data.i18n[cur_lang] -%}
+{%- assign alt_page = nil -%}
+{%- if page.i18n_id -%}
+  {%- for p in site.posts -%}
+    {%- if p.i18n_id == page.i18n_id and p.lang == alt_lang -%}
+      {%- assign alt_page = p -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if alt_page == nil -%}
+    {%- for p in site.pages -%}
+      {%- if p.i18n_id == page.i18n_id and p.lang == alt_lang -%}
+        {%- assign alt_page = p -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if alt_page -%}
+  {%- assign alt_url = alt_page.url -%}
+{%- elsif cur_lang == 'ko' -%}
+  {%- assign alt_url = '/en/' -%}
+{%- else -%}
+  {%- assign alt_url = '/' -%}
+{%- endif -%}

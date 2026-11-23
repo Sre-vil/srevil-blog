@@ -1,8 +1,18 @@
+{% include lang-utils.html %}
 <header class="top wrap">
-  <a class="brand" href="{{ '/' | relative_url }}">{% include duo.html uid="hd" size=26 %}<span>Srevil Blog</span></a>
-  <nav aria-label="주 메뉴">
-    <a href="{{ '/' | relative_url }}"{% if page.url == '/' %} class="on" aria-current="page"{% endif %}>홈</a>
-    <a href="{{ '/about/' | relative_url }}"{% if page.url == '/about/' %} class="on" aria-current="page"{% endif %}>소개</a>
-    <a href="{{ '/privacy/' | relative_url }}"{% if page.url == '/privacy/' %} class="on" aria-current="page"{% endif %}>개인정보처리방침</a>
+  <a class="brand" href="{{ path_prefix | append: '/' | relative_url }}">{% include duo.html uid="hd" size=26 %}<span>Srevil Blog</span></a>
+  <nav aria-label="{{ t.nav_label }}">
+    <a href="{{ path_prefix | append: '/' | relative_url }}"{% if page.i18n_id == 'home' %} class="on" aria-current="page"{% endif %}>{{ t.home }}</a>
+    <a href="{{ path_prefix | append: '/about/' | relative_url }}"{% if page.i18n_id == 'about' %} class="on" aria-current="page"{% endif %}>{{ t.about }}</a>
+    <a href="{{ path_prefix | append: '/privacy/' | relative_url }}"{% if page.i18n_id == 'privacy' %} class="on" aria-current="page"{% endif %}>{{ t.privacy }}</a>
+    <span class="lang-switch" role="group" aria-label="{{ t.lang_label }}">
+      {%- if cur_lang == 'ko' %}
+      <span class="on" aria-current="true">{{ t.lang_ko }}</span>
+      <a href="{{ alt_url | relative_url }}" lang="en" hreflang="en">{{ t.lang_en }}</a>
+      {%- else %}
+      <a href="{{ alt_url | relative_url }}" lang="ko" hreflang="ko">{{ t.lang_ko }}</a>
+      <span class="on" aria-current="true">{{ t.lang_en }}</span>
+      {%- endif %}
+    </span>
   </nav>
 </header>

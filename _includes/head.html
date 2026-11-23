@@ -4,6 +4,18 @@
 <!-- Google AdSense -->
 <meta name="google-adsense-account" content="ca-pub-7596956591156758">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7596956591156758" crossorigin="anonymous"></script>
+{% include lang-utils.html %}
+{%- assign abs_ko = site.url -%}
+{%- assign abs_en = site.url | append: '/en' -%}
+{%- if alt_page and cur_lang == 'ko' -%}
+<link rel="alternate" hreflang="ko" href="{{ site.url }}{{ page.url }}">
+<link rel="alternate" hreflang="en" href="{{ site.url }}{{ alt_page.url }}">
+<link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ page.url }}">
+{%- elsif alt_page and cur_lang == 'en' -%}
+<link rel="alternate" hreflang="en" href="{{ site.url }}{{ page.url }}">
+<link rel="alternate" hreflang="ko" href="{{ site.url }}{{ alt_page.url }}">
+<link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ alt_page.url }}">
+{%- endif %}
 {% seo %}
 {% feed_meta %}
 <link rel="icon" type="image/svg+xml" href="{{ '/assets/img/favicon.svg' | relative_url }}">

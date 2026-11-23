@@ -2,6 +2,8 @@
 layout: page
 title: 개인정보처리방침
 permalink: /privacy/
+lang: ko
+i18n_id: privacy
 description: Srevil Blog 개인정보처리방침과 광고·쿠키 안내
 ---
 

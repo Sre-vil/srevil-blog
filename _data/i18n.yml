@@ -1,0 +1,32 @@
+ko:
+  home: 홈
+  about: 소개
+  privacy: 개인정보처리방침
+  tagline: 기록하고 정리하는 블로그
+  hero_line: 밤사이 쌓인 메모를 한 편의 글로 옮겨 적는 곳입니다.
+  empty_title: 아직 글이 없습니다
+  empty_body: 첫 기록을 준비하고 있어요. 곧 이곳에 밤사이 정리한 글이 하나씩 쌓입니다.
+  empty_cta: 이 블로그 소개 보기
+  prev: 이전 글
+  next: 다음 글
+  min_read: 분 읽기
+  nav_label: 주 메뉴
+  lang_label: 언어
+  lang_ko: KO
+  lang_en: EN
+en:
+  home: Home
+  about: About
+  privacy: Privacy
+  tagline: Notes, written down
+  hero_line: A place to turn late-night notes into a finished post.
+  empty_title: No posts yet
+  empty_body: The first note is on its way. Finished posts will show up here.
+  empty_cta: About this blog
+  prev: Previous
+  next: Next
+  min_read: min read
+  nav_label: Main menu
+  lang_label: Language
+  lang_ko: KO
+  lang_en: EN
