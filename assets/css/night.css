@@ -95,7 +95,11 @@ nav a:hover,nav a.on{color:var(--fg);background:rgba(255,255,255,.06)}
 .prose{max-width:720px;margin:0 auto;font-size:17.5px;color:#d6d3cc}
 .prose h2{font-size:25px;margin:2.2em 0 .6em;letter-spacing:-.02em;color:var(--fg)}
 .prose h2::before{content:"#";font-family:var(--mono);color:var(--claude);margin-right:.5em}
-.prose strong{color:#fff}
+.prose strong{color:#fff;font-weight:700}
+.prose mark{color:var(--fg);background:linear-gradient(transparent 58%,rgba(217,119,87,.32) 58%);padding:0 .08em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.prose .takeaway{margin:1.8em 0 2.2em;padding:18px 22px;border-left:2px solid var(--claude);background:linear-gradient(90deg,rgba(217,119,87,.12),transparent);border-radius:0 12px 12px 0;color:var(--fg)}
+.prose .takeaway p{margin:0}
+.prose .takeaway p+p{margin-top:.55em}
 .prose blockquote{margin:2em 0;padding:18px 24px;border-left:2px solid var(--claude);background:linear-gradient(90deg,rgba(217,119,87,.1),transparent);font-size:19px;color:var(--fg);border-radius:0 12px 12px 0}
 .prose pre{background:#08080b;border:1px solid var(--line);border-radius:14px;padding:20px;overflow:auto;font:14px/1.7 var(--mono);color:#cfcdd6;box-shadow:0 0 0 1px rgba(217,119,87,.08),0 20px 50px -20px rgba(217,119,87,.25)}
 .prose .c{color:#6b6a74}.prose .p{color:var(--claude)}.prose .ok{color:#7fd6a4}

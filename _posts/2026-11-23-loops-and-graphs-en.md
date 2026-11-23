@@ -9,19 +9,19 @@ lang: en
 i18n_id: loops-and-graphs
 ---
 
-You don't need to watch every step an agent takes. The useful place for a human is the step that's hard to undo, and expensive if it goes wrong. Watching the middle of the run usually means that place was never chosen in advance.
+You don't need to watch every step an agent takes. <mark>The useful place for a human is the step that's hard to undo, and expensive if it goes wrong.</mark> Watching the middle of the run usually means that place was never chosen in advance.
 
 I wrote this after reading Hanako (@hanakoxbt)'s “Loops and Graphs.” These are my notes, not a translation. Three points stuck.
 
-- Write a check a program can pass or fail, and write it before the work starts.
-- Connect two steps only when output actually feeds the next input. Otherwise run them side by side.
-- Step in where the blast radius is large. A model's confidence is hard to see, and a poor guide.
+- Write a check a program can pass or fail, and write it **before the work starts**.
+- Connect two steps only when **output actually feeds the next input**. Otherwise run them side by side.
+- Step in where the **blast radius** is large. A model's confidence is hard to see, and a poor guide.
 
 ## Write the passing condition first
 
 Even after I hand work to an agent, I stay in front of the screen. I follow the scroll while tokens come out. If an intermediate result looks off, I jump in.
 
-The essay splits that habit into a Loop and a Graph. A Loop is produce, check, fix, and repeat until the check goes green. If the check is a matter of taste, the loop never settles. It has to be something a program can decide. Write that condition first, and the agent can run against it. I don't have to read every turn.
+The essay splits that habit into a Loop and a Graph. A **Loop** is produce, check, fix, and repeat until the check goes green. If the check is a matter of taste, the loop never settles. It has to be something a program can decide. Write that condition first, and the agent can run against it. I don't have to read every turn.
 
 {::nomarkdown}
 <div class="lg-guide" id="lgGuide">
@@ -49,9 +49,9 @@ The diagram runs one cycle: a failed check, a fix, then a pass. The center state
 
 ## Connect only what actually connects
 
-A Graph is how those loops attach. Don't hand over the job as one blob. Split it, run the pieces, join them in code. The original names a few node types. I found myself thinking less about the names, and more about how far a failure would spread.
+A **Graph** is how those loops attach. Don't hand over the job as one blob. Split it, run the pieces, join them in code. The original names a few node types. I found myself thinking less about the names, and more about how far a failure would spread.
 
-There's an edge between two steps only when the output of one actually becomes the input of the next. If you can't name the value that crosses the boundary, they don't need to run in sequence. The diagram below shows the same work first as a chain, then with the extra lines removed so the workers can run together.
+There's an edge between two steps only when the output of one **actually becomes the input** of the next. If you can't name the value that crosses the boundary, they don't need to run in sequence. The diagram below shows the same work first as a chain, then with the extra lines removed so the workers can run together.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -73,7 +73,13 @@ If everything is pushed through at once because the agent is fast, the mess is h
 
 The line that stayed with me is this: pick the intervention point by blast radius. I can't see how confident the model really is. I can usually see the step that's hard to undo, or that leaves a mark in a repo other people use. That's where a gate belongs. The rest can pass or retry on its own.
 
-Next time I give an agent a task, I want to write two lines before I watch the screen: what counts as a pass, and which step I'll look at last. I haven't run my own work this way yet. These are notes from reading, not a field report.
+Next time I give an agent a task, I want to write two lines before I watch the screen:
+
+<aside class="takeaway">
+<p>What counts as a pass, and which step I'll look at last.</p>
+</aside>
+
+I haven't run my own work this way yet. These are notes from reading, not a field report.
 
 ## Sources
 
