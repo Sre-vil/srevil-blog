@@ -9,21 +9,19 @@ lang: en
 i18n_id: loops-and-graphs
 ---
 
-You don't need to watch every step an agent takes. <mark>The useful place for a human is the step that's hard to undo, and expensive if it goes wrong.</mark> Watching the middle of the run usually means that place was never chosen in advance.
+You don't need to watch every step an agent takes. <mark>A person only needs to approve the one step that is hardest to undo and has the largest blast radius.</mark> Quality in the middle comes from checks that can fail (the Loop) and from how the work is structured (the Graph).
 
-I wrote this after reading Hanako (@hanakoxbt)'s “Loops and Graphs.” These are my notes, not a translation. I unpacked the original down to blocks you can paste into a coding agent.
+I wrote this after reading Hanako (@hanakoxbt)'s “Loops and Graphs.” These are my notes, not a translation, and I unpacked the original into blocks you can paste into a coding agent.
 
-Three points stuck.
+Three points stand out.
 
-- Write a check a program can pass or fail, and write it **before the work starts**.
-- Connect two steps only when **output actually feeds the next input**. Otherwise run them side by side.
-- Step in where the **blast radius** is large. A model's confidence is hard to see, and a poor guide.
+- Write a check a program can pass or fail, and write it before the work starts.
+- Connect two steps only when the output of one actually feeds the input of the next. Otherwise run them side by side.
+- Step in where the blast radius is large. Leave the model's confidence score out of it.
 
 ## Write the passing condition first
 
-After you hand work to an agent, it is easy to follow the scroll and jump in whenever an intermediate result looks off. If the check is a matter of taste, the loop never settles.
-
-The essay splits that habit into a Loop and a Graph. A **Loop** is produce, check, fix, and repeat until the check goes green. It has to be something a program can decide. Write that condition first, and the agent can run against it without a person reading every turn.
+A **Loop** is produce, check, fix, and repeat until the check goes green. The check has to be able to fail, and a program has to be able to decide pass or fail. That is why the check gets written before the work.
 
 {::nomarkdown}
 <div class="lg-guide" id="lgGuide">
@@ -33,10 +31,10 @@ The essay splits that habit into a Loop and a Graph. A **Loop** is produce, chec
         <defs><linearGradient id="lg1" x1="0" x2="1"><stop offset="0" stop-color="#7fb2ef"/><stop offset="1" stop-color="#b794f4"/></linearGradient></defs>
         <circle class="lg-ring" cx="260" cy="220" r="160"/>
         <circle class="lg-ringP" id="ringP" cx="260" cy="220" r="160" stroke-dasharray="0 1006" transform="rotate(-90 260 220)"/>
-        <g class="lg-st" id="stP" transform="translate(260 60)"><circle r="44"/><text class="lg-n-txt" y="-6" style="fill:#f3f1ec">Produce</text><text class="lg-n-sub" y="14">produce</text></g>
-        <g class="lg-st" id="stC" transform="translate(420 220)"><circle r="44"/><text class="lg-n-txt" y="-6" style="fill:#f3f1ec">Check</text><text class="lg-n-sub" y="14">check</text></g>
-        <g class="lg-st" id="stF" transform="translate(260 380)"><circle r="44"/><text class="lg-n-txt" y="-6" style="fill:#f3f1ec">Fix</text><text class="lg-n-sub" y="14">correct</text></g>
-        <g class="lg-st" id="stR" transform="translate(100 220)"><circle r="44"/><text class="lg-n-txt" y="-6" style="fill:#f3f1ec">Repeat</text><text class="lg-n-sub" y="14">repeat</text></g>
+        <g class="lg-st" id="stP" transform="translate(260 60)"><circle r="44"/><text class="lg-n-txt" y="0" style="fill:#f3f1ec">Produce</text></g>
+        <g class="lg-st" id="stC" transform="translate(420 220)"><circle r="44"/><text class="lg-n-txt" y="0" style="fill:#f3f1ec">Check</text></g>
+        <g class="lg-st" id="stF" transform="translate(260 380)"><circle r="44"/><text class="lg-n-txt" y="0" style="fill:#f3f1ec">Fix</text></g>
+        <g class="lg-st" id="stR" transform="translate(100 220)"><circle r="44"/><text class="lg-n-txt" y="0" style="fill:#f3f1ec">Repeat</text></g>
         <text class="lg-center" x="260" y="205" font-size="14" fill="#a9a7b0">Current check</text>
         <text class="lg-center" id="loopCenter" x="260" y="235" font-size="26" font-weight="700">Waiting</text>
         <circle id="loopDot" r="8" cx="260" cy="60"/>
@@ -49,7 +47,7 @@ The essay splits that habit into a Loop and a Graph. A **Loop** is produce, chec
 
 The diagram runs one cycle: a failed check, a fix, then a pass. The center state flips from red to green.
 
-Some things belong in the check. Some do not.
+Here is what counts as a check and what does not.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -79,11 +77,11 @@ Some things belong in the check. Some do not.
 
 ## Connect only what actually connects
 
-A **Graph** is how those loops attach. A node is a bounded piece of work with one input and one output. There's an edge between two steps only when the output of one **actually becomes the input** of the next.
+A **Graph** decides which units of work exist and how they connect. A node is a bounded task with one input and one output. Two nodes get an edge only when the output of one actually becomes the input of the other. “And then” is not an edge.
 
-Ask this of every arrow. Can you name the value that crosses it? Does the next step actually read the previous output? If you cannot name it, there is no reason to run them in sequence. Put them side by side.
+Ask this of every arrow: does the next step actually read the previous output? If you cannot name the variable that crosses it, there is no edge, and the two steps can run in parallel.
 
-The diagram below shows the same work first as a chain, then with the extra lines removed so the workers can run together.
+In the diagram below, utils, handlers, and adapters start out in a chain. The two arrows with no variable crossing turn red and disappear, and three workers running together take one time unit instead of three.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -101,7 +99,7 @@ The diagram below shows the same work first as a chain, then with the extra line
 
 ## Draw the pipeline with four node types
 
-The original draws a pipeline as four roles. The names matter less than this: how far a failure would spread.
+The original draws every pipeline with four node types.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -109,7 +107,7 @@ The original draws a pipeline as four roles. The names matter less than this: ho
     <div class="lg-card">
       <p class="lg-k">Splitter</p>
       <p class="lg-h">Split</p>
-      <p>Cut the work at the front. This is the decision to make first. Cut by blast radius, not by folder.</p>
+      <p>Cut the work at the front. This is the most important decision. Cut by blast radius, not by folder.</p>
     </div>
     <div class="lg-card">
       <p class="lg-k">Worker</p>
@@ -131,10 +129,10 @@ The original draws a pipeline as four roles. The names matter less than this: ho
 {:/nomarkdown}
 
 {::nomarkdown}
-<div class="lg-guide"><div class="lg-hint"><p>If you can describe the step without words like “judge, decide, evaluate, or summarize,” build it in code, not with a model.</p></div></div>
+<div class="lg-guide"><div class="lg-hint"><p>If you can describe the step without words like “judge, decide, evaluate, or summarize,” make it code, not a model.</p></div></div>
 {:/nomarkdown}
 
-Do not run workers as subtasks in the same conversation. Launch each as a subagent, with its own context.
+Give each worker its own context. Do not run subtasks in the same conversation; launch a subagent for each.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -192,7 +190,7 @@ Most setups only build the short path. You need the long path too, or the same m
 
 The short path is a correction edge. The gate returns the failed unit to the step that made it. That fixes this run.
 
-The long path is a learning edge. You extract constraints from accepted results and put them in the splitter's brief. That fixes later runs. This is the path people drop.
+The long path is a learning edge. You extract constraints from accepted results and put them in the splitter's brief. That fixes every later run. Most setups skip this path.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -231,9 +229,19 @@ The long path is a learning edge. You extract constraints from accepted results 
 </div>
 {:/nomarkdown}
 
-Here is the example from the original. When the utils slice ports and goes green on the first pass, you derive a constraint: adapters must preserve keyword args exactly. That line lands in the splitter's brief for every later slice. In Claude Code, you can append it to the “Learned constraints” section of CLAUDE.md.
+Say the utils slice ports and goes green on the first pass. From that you derive a constraint, that adapters must preserve keyword args exactly, and it goes into the splitter's brief for every later slice.
 
-Return only the failed unit. If one of four fails, retry that one. Rewrite the whole batch, and the three that already passed get written differently. The results stop lining up.
+```
+ACCEPTED   utils slice ported, green on first pass
+DERIVED    adapters preserve keyword args exactly
+LANDS IN   the splitter's brief for every later slice
+```
+
+In Claude Code, you can append the DERIVED line to the “Learned constraints” section of CLAUDE.md.
+
+## Return only the failed unit
+
+If one of four units fails, send back that one. Send the whole batch back, and the three that already passed get rewritten differently, so the results stop converging.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -243,7 +251,7 @@ Return only the failed unit. If one of four fails, retry that one. Rewrite the w
     <div class="lg-slice"><span>adapters slice 3</span><span>→ </span></div>
     <div class="lg-slice"><span>models slice 4</span><span>→ </span></div>
   </div>
-  <p class="lg-cap">Only the failed handlers unit goes back to the gate. The other three stay as they are.</p>
+  <p class="lg-cap">The gate sends only the failed handlers unit back to the step that made it. The other three stay as they are.</p>
 </div>
 {:/nomarkdown}
 
@@ -259,7 +267,7 @@ SCOPE     fix this file only, do not touch other slices
 
 Without SCOPE, the fix spreads. You end up with a large diff nobody reviewed.
 
-If the same unit fails three times, the unit is probably not the problem. The split is. Escalate that to a human.
+Retry at most three times. If a unit fails three times, the unit is not the problem; the split is. That is a planning problem, so escalate it to a human.
 
 ## Step in only where the blast radius is large
 
@@ -323,7 +331,7 @@ Goal: I do not review intermediate results. I approve only the step that is hard
 
 2. Edges are real data flow only
    - For every arrow, name the variable that crosses it.
-   - If you cannot name it, it is not an edge — run the steps in parallel.
+   - If you cannot name it, it is not an edge → run the steps in parallel.
    - Parallel work runs as subagents, each in its own context.
 
 3. Do deterministic work in code
@@ -424,7 +432,7 @@ Pick one recurring task. Draw a splitter, the lanes, a merge, one gate, and one 
   <div class="lg-steps">
     <div class="lg-step"><div class="lg-dot">1</div><div><p class="lg-h">The gate first</p><p>Decide what counts as GREEN, which lanes can pass on their own, and which ones a person sees.</p></div></div>
     <div class="lg-step"><div class="lg-dot">2</div><div><p class="lg-h">Split the lanes</p><p>Cut by blast radius. If no value crosses between two steps, put them in parallel lanes.</p></div></div>
-    <div class="lg-step"><div class="lg-dot">3</div><div><p class="lg-h">The learning edge last</p><p>You need accepted results before you can extract constraints. When you have them, put them in the splitter brief — in CLAUDE.md.</p></div></div>
+    <div class="lg-step"><div class="lg-dot">3</div><div><p class="lg-h">The learning edge last</p><p>You need accepted results before you can extract constraints. When you have them, put them in the splitter brief (CLAUDE.md).</p></div></div>
     <div class="lg-step"><div class="lg-dot">4</div><div><p class="lg-h">A human at one point only</p><p>Approve the merge, or choose which fix to ship. That is the one job.</p></div></div>
   </div>
 </div>
@@ -440,8 +448,8 @@ I haven't run my own work this way yet. These are notes from reading, not a fiel
 
 ## Sources
 
-- **Original**: Hanako(@hanakoxbt), “Loops and Graphs” — [https://x.com/hanakoxbt/status/2091515787366306154](https://x.com/hanakoxbt/status/2091515787366306154)
-- **About this post**: A blog post written in my own words after reading the original. It is not a full translation. Any mistakes in the retelling are mine.
-- **Author**: Woobin (Srevil)
-- **Written with**: Claude
-- **Diagrams**: The Loop and Graph animations, plus the extra figures and templates, are adapted from an earlier HTML guide of mine (`Loops-and-Graphs.html`), trimmed to what helps this post.
+- Original: Hanako (@hanakoxbt), “Loops and Graphs,” [https://x.com/hanakoxbt/status/2091515787366306154](https://x.com/hanakoxbt/status/2091515787366306154)
+- About this post: written in my own words after reading the original. It is not a full translation, and any mistakes in the retelling are mine.
+- Author: Woobin (Srevil)
+- Written with: Claude
+- Diagrams: the Loop and Graph animations, plus the extra figures and templates, are adapted from an earlier HTML guide of mine (`Loops-and-Graphs.html`), trimmed to what helps this post.

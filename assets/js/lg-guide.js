@@ -14,9 +14,10 @@
       stPass: '$ npm test → 통과',
       stWait: '$ npm test → 대기',
       fakeEdge: '가짜 엣지',
-      timePar: '워커 3개가 동시에 돌아요: 1 단위 시간',
-      timeFake: 'utils → handlers, handlers → adapters 사이로 넘어가는 변수가 없어요',
-      timeSer: '워커 3개가 차례로 돌아요: 3 단위 시간',
+      timePar: '워커 3개가 동시에 돌아갑니다: 1 단위 시간',
+      timeFake: 'utils → handlers, handlers → adapters 사이로 넘어가는 변수가 없습니다',
+      timeSer: '워커 3개가 차례로 돌아갑니다: 3 단위 시간',
+      nSplitSub: '분할', nGateSub: '관문',
       copied: '복사됨',
       copy: '복사'
     },
@@ -29,6 +30,7 @@
       timePar: '3 workers in parallel: 1 time unit',
       timeFake: 'no variable passes from utils → handlers, or handlers → adapters',
       timeSer: '3 workers in sequence: 3 time units',
+      nSplitSub: 'by blast radius', nGateSub: 'pass / reject',
       copied: 'Copied',
       copy: 'Copy'
     }
@@ -114,28 +116,32 @@
     whenVisible(svg, start);
   })();
 
-  /* ---------- Graph (DAG) ---------- */
+  /* ---------- Graph (DAG): Splitter -> 3 workers -> Merge (code) -> Gate ---------- */
   (function(){
     var svg = $('#dagSvg'); if (!svg) return;
     var NS = 'http://www.w3.org/2000/svg';
-    var nodes = [
-      { id:'U', l:'utils', c:'#7fb2ef', x:70, y:160 },
-      { id:'H', l:'handlers', c:'#b794f4', x:230, y:160 },
-      { id:'A', l:'adapters', c:'#f0b45a', x:390, y:160 },
-      { id:'W1', l:'worker 1', c:'#30d158', x:560, y:70 },
-      { id:'W2', l:'worker 2', c:'#30d158', x:560, y:160 },
-      { id:'W3', l:'worker 3', c:'#30d158', x:560, y:250 }
-    ];
-    var lin = { U:[70,160], H:[230,160], A:[390,160], W1:[560,70], W2:[560,160], W3:[560,250] };
-    var par = { U:[90,80], H:[90,160], A:[90,240], W1:[420,80], W2:[420,160], W3:[420,240] };
-    var pos = JSON.parse(JSON.stringify(lin));
-    var edges = [['U','H'],['H','A'],['A','W1'],['A','W2'],['A','W3'],['U','W1'],['H','W2']];
-    var vis = {
-      0: { UH:1, HA:1, AW1:1, AW2:1, AW3:1 },
-      1: { UH:1, HA:1, AW1:1, AW2:1, AW3:1 },
-      2: { UW1:1, HW2:1, AW3:1 }
+    var W = 96, H = 58;
+    var nodes = {
+      S: { t:'Splitter', s:T.nSplitSub, c:'#f0b45a' },
+      U: { t:'utils',    s:'Worker',    c:'#7fb2ef' },
+      H: { t:'handlers', s:'Worker',    c:'#7fb2ef' },
+      A: { t:'adapters', s:'Worker',    c:'#7fb2ef' },
+      M: { t:'Merge',    s:'Code',      c:'#30d158' },
+      G: { t:'Gate',     s:T.nGateSub,  c:'#b794f4' }
     };
+    var lin = { S:[60,160], U:[192,160], H:[324,160], A:[456,160], M:[588,160], G:[720,160] };
+    var par = { S:[70,160], U:[300,60],  H:[300,160], A:[300,260], M:[540,160], G:[710,160] };
+    var edges = [
+      ['S','U','slice'], ['U','H',''], ['H','A',''], ['A','M','diff'], ['M','G','merged'],
+      ['S','H','slice'], ['S','A','slice'], ['U','M','diff'], ['H','M','diff']
+    ];
+    var vis = [
+      { SU:1, UH:1, HA:1, AM:1, MG:1 },
+      { SU:1, UH:1, HA:1, AM:1, MG:1 },
+      { SU:1, SH:1, SA:1, UM:1, HM:1, AM:1, MG:1 }
+    ];
     var state = 0, anim = null;
+    var pos = JSON.parse(JSON.stringify(lin));
 
     var defs = document.createElementNS(NS, 'defs');
     defs.innerHTML = '<marker id="dArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8b8a93"></path></marker><marker id="dArrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ff453a"></path></marker>';
@@ -143,67 +149,75 @@
 
     var eEls = {}, lEls = {}, vEls = {}, nEls = {};
     edges.forEach(function(e){
-      var k = e[0]+e[1];
+      var k = e[0] + e[1];
       var p = document.createElementNS(NS, 'path');
       p.setAttribute('class', 'lg-edge');
       p.setAttribute('marker-end', 'url(#dArr)');
       svg.appendChild(p); eEls[k] = p;
-      var lb = document.createElementNS(NS, 'text');
-      lb.setAttribute('class', 'lg-elabel'); lb.textContent = T.fakeEdge; lb.style.opacity = 0;
-      svg.appendChild(lb); lEls[k] = lb;
-      var vl = document.createElementNS(NS, 'text');
-      vl.setAttribute('class', 'lg-vlabel'); vl.style.opacity = 0;
-      svg.appendChild(vl); vEls[k] = vl;
+      if (k === 'UH' || k === 'HA'){
+        var lb = document.createElementNS(NS, 'text');
+        lb.setAttribute('class', 'lg-elabel'); lb.textContent = T.fakeEdge; lb.style.opacity = 0;
+        svg.appendChild(lb); lEls[k] = lb;
+      }
+      if (e[2]){
+        var vl = document.createElementNS(NS, 'text');
+        vl.setAttribute('class', 'lg-vlabel'); vl.textContent = e[2]; vl.style.opacity = 0;
+        svg.appendChild(vl); vEls[k] = vl;
+      }
     });
-    nodes.forEach(function(n){
-      var g = document.createElementNS(NS, 'g');
-      var W = n.id[0]==='W' ? 128 : 120, H = 44;
-      g.innerHTML = '<rect class="lg-n-rect" x="'+(-W/2)+'" y="'+(-H/2)+'" width="'+W+'" height="'+H+'" rx="14" style="stroke:'+n.c+';stroke-width:2"></rect>'+
-        '<text class="lg-n-txt" y="1" style="fill:#f3f1ec">'+n.l+'</text>';
-      svg.appendChild(g); nEls[n.id] = g;
+    Object.keys(nodes).forEach(function(k){
+      var n = nodes[k], g = document.createElementNS(NS, 'g');
+      g.innerHTML = '<rect class="lg-n-rect" x="'+(-W/2)+'" y="'+(-H/2)+'" width="'+W+'" height="'+H+'" rx="14" style="stroke:'+n.c+';stroke-width:2"></rect>' +
+        '<text class="lg-n-txt" y="-7" style="font-size:14px;fill:#f3f1ec">'+n.t+'</text>' +
+        '<text class="lg-n-sub" y="13" style="fill:'+n.c+'">'+n.s+'</text>';
+      svg.appendChild(g); nEls[k] = g;
     });
 
     function render(){
-      nodes.forEach(function(n){
-        var p = pos[n.id];
-        nEls[n.id].setAttribute('transform', 'translate('+p[0]+' '+p[1]+')');
+      Object.keys(nEls).forEach(function(k){
+        nEls[k].setAttribute('transform', 'translate('+pos[k][0]+' '+pos[k][1]+')');
       });
       edges.forEach(function(e){
-        var k = e[0]+e[1], a = pos[e[0]], b = pos[e[1]];
-        var dx = b[0]-a[0], dy = b[1]-a[1], len = Math.sqrt(dx*dx+dy*dy) || 1;
-        var ux = dx/len, uy = dy/len, pad = 28;
-        var x1 = a[0]+ux*pad, y1 = a[1]+uy*pad, x2 = b[0]-ux*pad, y2 = b[1]-uy*pad;
-        eEls[k].setAttribute('d', 'M'+x1+' '+y1+' L'+x2+' '+y2);
-        if (lEls[k]){ lEls[k].setAttribute('x', (x1+x2)/2); lEls[k].setAttribute('y', (y1+y2)/2 - 8); }
-        if (vEls[k]){ vEls[k].setAttribute('x', (x1+x2)/2); vEls[k].setAttribute('y', (y1+y2)/2 + 14); }
+        var k = e[0] + e[1], a = pos[e[0]], b = pos[e[1]];
+        var x1 = a[0] + W/2, y1 = a[1], x2 = b[0] - W/2 - 4, y2 = b[1], mx = (x1 + x2) / 2;
+        eEls[k].setAttribute('d', 'M'+x1+' '+y1+' C'+mx+' '+y1+' '+mx+' '+y2+' '+x2+' '+y2);
+        if (lEls[k]){ lEls[k].setAttribute('x', (x1 + x2) / 2); lEls[k].setAttribute('y', y1 - 40); }
+        if (vEls[k]){
+          var vx = (x1 + x2) / 2, vy = (y1 + y2) / 2 - 8;
+          if (state === 2 && (k === 'SU' || k === 'SA' || k === 'UM' || k === 'AM')){
+            vy = (y1 + y2) / 2 + ((y2 < y1) === (k === 'SU' || k === 'AM') ? -14 : 18);
+          }
+          vEls[k].setAttribute('x', vx); vEls[k].setAttribute('y', vy);
+        }
       });
     }
     function applyStyles(){
       edges.forEach(function(e){
-        var k = e[0]+e[1], on = !!(vis[state] && vis[state][k]), fake = state===1 && (k==='UH' || k==='HA');
+        var k = e[0] + e[1], on = !!vis[state][k], fake = state === 1 && (k === 'UH' || k === 'HA');
         eEls[k].style.opacity = on ? 1 : 0;
         eEls[k].classList.toggle('fake', fake);
         eEls[k].setAttribute('marker-end', fake ? 'url(#dArrR)' : 'url(#dArr)');
         if (lEls[k]) lEls[k].style.opacity = fake ? 1 : 0;
-        if (vEls[k]) vEls[k].style.opacity = (on && state>=1) ? 1 : 0;
+        if (vEls[k]) vEls[k].style.opacity = (on && state >= 1) ? 1 : 0;
       });
       var tb = $('#timeBar'), tt = $('#timeTxt');
-      if (state===2){ if (tb) tb.style.width = '38%'; if (tt) tt.textContent = T.timePar; }
-      else if (state===1){ if (tb) tb.style.width = '100%'; if (tt) tt.textContent = T.timeFake; }
+      if (state === 2){ if (tb) tb.style.width = '38%'; if (tt) tt.textContent = T.timePar; }
+      else if (state === 1){ if (tb) tb.style.width = '100%'; if (tt) tt.textContent = T.timeFake; }
       else { if (tb) tb.style.width = '100%'; if (tt) tt.textContent = T.timeSer; }
     }
     function go(s){
       state = s; applyStyles();
-      var target = s===2 ? par : lin, from = JSON.parse(JSON.stringify(pos));
+      var target = s === 2 ? par : lin, from = JSON.parse(JSON.stringify(pos));
       if (anim) cancelAnimationFrame(anim);
       if (RM){ pos = JSON.parse(JSON.stringify(target)); render(); return; }
       var t0 = null, D = 900;
       function f(ts){
-        if (t0===null) t0 = ts; var k = Math.min(1, (ts-t0)/D); k = 1-Math.pow(1-k,3);
+        if (t0 === null) t0 = ts;
+        var k = Math.min(1, (ts - t0) / D); k = 1 - Math.pow(1 - k, 3);
         Object.keys(pos).forEach(function(n){
-          pos[n] = [from[n][0]+(target[n][0]-from[n][0])*k, from[n][1]+(target[n][1]-from[n][1])*k];
+          pos[n] = [from[n][0] + (target[n][0] - from[n][0]) * k, from[n][1] + (target[n][1] - from[n][1]) * k];
         });
-        render(); if (k<1) anim = requestAnimationFrame(f);
+        render(); if (k < 1) anim = requestAnimationFrame(f);
       }
       anim = requestAnimationFrame(f);
     }

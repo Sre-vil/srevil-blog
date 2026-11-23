@@ -9,21 +9,19 @@ lang: ko
 i18n_id: loops-and-graphs
 ---
 
-<mark>사람 승인 자리는 되돌리기 어렵고, 잘못됐을 때 영향이 큰 한 단계면 됩니다.</mark> 중간 과정을 줄줄이 들여다보는 일은, 그 자리를 미리 정해 두지 않아서 생깁니다.
+<mark>사람이 승인할 자리는 되돌리기 가장 어렵고 영향이 가장 큰 한 단계면 됩니다.</mark> 중간 결과를 하나하나 검토하지 않아도 되도록, 품질은 실패할 수 있는 체크(Loop)와 작업 구조(Graph)가 맡습니다.
 
-이 글은 Hanako(@hanakoxbt)의 “Loops and Graphs”를 읽고 제 말로 정리한 기록입니다. 원문의 골자를, 바로 붙여 쓸 수 있는 단위까지 풀어 적습니다.
+이 글은 Hanako(@hanakoxbt)의 “Loops and Graphs”를 읽고 제 말로 정리한 기록입니다. 원문의 골자를 바로 붙여 쓸 수 있는 템플릿까지 풀어 적었습니다.
 
 골자는 셋입니다.
 
-- 체크는 프로그램이 판정할 수 있게, **작업보다 먼저** 적는다.
-- 일은 실제로 **입출력이 이어질 때만** 잇고, 아니면 나란히 돌린다.
-- 사람이 들어가는 기준은 **영향 범위**다. 모델이 얼마나 확신하는지는 잘 보이지 않는다.
+- 체크는 프로그램이 판정할 수 있게 작업보다 먼저 적습니다.
+- 작업 단계는 출력이 실제로 다음 입력으로 들어갈 때만 잇고, 아니면 나란히 돌립니다.
+- 사람이 들어가는 기준은 영향 범위입니다. 모델의 확신 점수는 기준에 넣지 않습니다.
 
 ## 통과 조건을 먼저 적는다
 
-에이전트에게 일을 맡긴 뒤에도 화면을 따라가며, 중간마다 손을 대고 싶어집니다. 검사 기준이 사람 취향이면 그 루프는 멈추지 않습니다.
-
-원문은 그 감시를 Loop와 Graph로 나눠 봅니다. **Loop**는 생성하고, 검사하고, 고치고, 검사가 통과할 때까지 반복하는 순환입니다. 프로그램이 통과와 실패를 가릴 수 있어야 합니다. 그 기준을 작업보다 먼저 적어 두면, 에이전트는 그 조건을 혼자 돌 수 있습니다.
+**Loop**는 생성하고, 체크하고, 고치고, 체크가 GREEN이 될 때까지 반복하는 순환입니다. 이때 체크는 실패할 수 있어야 하고, 프로그램이 통과와 실패를 판정할 수 있어야 합니다. 그래서 체크를 작업보다 먼저 씁니다.
 
 {::nomarkdown}
 <div class="lg-guide" id="lgGuide">
@@ -47,9 +45,9 @@ i18n_id: loops-and-graphs
 </div>
 {:/nomarkdown}
 
-그림은 한 바퀴를 돌며 한 번은 실패하고, 고친 뒤 통과하는 순환입니다. 가운데 상태가 빨강에서 초록으로 바뀝니다.
+그림은 한 바퀴를 돌며 한 번 실패하고, 고친 뒤 통과하는 순환입니다. 가운데 상태가 빨강에서 초록으로 바뀝니다.
 
-체크에 들어갈 수 있는 것과, 들어가면 안 되는 것이 갈립니다.
+무엇이 체크이고 무엇이 아닌지는 이렇게 갈립니다.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -70,7 +68,7 @@ i18n_id: loops-and-graphs
         <li>“결과가 괜찮아 보인다”</li>
         <li>“모델이 자신 있다고 한다”</li>
         <li>“에러가 안 났다.” 에러가 없다고 정답은 아닙니다</li>
-        <li>다른 모델에게 “검토해줘”만 시키기. 낙관적인 쪽끼리 동의하는 일에 가깝습니다</li>
+        <li>다른 모델에게 “검토해줘”만 시키기. 낙관적인 모델 둘이 서로 동의할 뿐입니다</li>
       </ul>
     </div>
   </div>
@@ -79,11 +77,11 @@ i18n_id: loops-and-graphs
 
 ## 이어지는 일만 잇는다
 
-**Graph**는 그런 루프를 어떻게 붙일지 그리는 방식입니다. 노드는 입력 하나, 출력 하나인 제한된 작업입니다. 한 단계의 출력이 다음 입력으로 **실제로 들어갈 때만** 둘 사이에 선이 있습니다.
+**Graph**는 어떤 작업 단위가 있고 어떻게 연결되는지를 정합니다. 노드는 입력 하나, 출력 하나인 제한된 작업입니다. 한 노드의 출력이 다른 노드의 입력으로 실제로 들어갈 때만 둘 사이에 엣지가 있습니다. “그리고 나서”는 엣지가 아닙니다.
 
-화살표마다 물으면 됩니다. 넘어가는 값의 이름을 댈 수 있나요. 다음 단계가 이전 단계의 출력을 실제로 읽나요. 이름을 대지 못하면 둘을 이어서 돌릴 이유가 없습니다. 그 둘은 나란히 두면 됩니다.
+화살표마다 물으면 됩니다. 다음 단계가 이전 단계의 출력을 실제로 읽나요? 넘어가는 변수를 이름으로 댈 수 없으면 엣지가 없는 겁니다. 그 둘은 병렬로 돌리면 됩니다.
 
-아래 그림은 같은 일을 차례로 붙인 상태와, 필요 없는 선을 걷어 내고 나란히 돌리는 상태를 이어서 보여 줍니다.
+아래 그림에서 utils, handlers, adapters는 처음에 한 줄로 이어져 있습니다. 넘어가는 변수가 없는 두 화살표가 빨갛게 표시됐다가 사라지고, 셋이 동시에 돌면 3 단위 시간이 1 단위로 줄어듭니다.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -92,7 +90,7 @@ i18n_id: loops-and-graphs
       <svg id="dagSvg" viewBox="0 0 780 320" role="img" aria-label="직렬 체인에서 가짜 엣지를 제거하면 병렬 그래프가 되는 다이어그램"></svg>
       <div class="lg-timebar">
         <div class="lg-row"><span>소요 시간</span><div class="lg-bar" id="timeBar" style="width:100%"></div></div>
-        <div class="lg-row"><span></span><small id="timeTxt">워커 3개가 차례로 돌아요: 3 단위 시간</small></div>
+        <div class="lg-row"><span></span><small id="timeTxt">워커 3개가 차례로 돌아갑니다: 3 단위 시간</small></div>
       </div>
     </div>
   </figure>
@@ -101,7 +99,7 @@ i18n_id: loops-and-graphs
 
 ## 네 가지 노드로 그린다
 
-원문은 파이프라인을 네 가지 역할로 그립니다. 이름을 외우기보다, 한 단계가 실패했을 때 영향이 어디까지 닿는지를 먼저 보면 됩니다.
+원문은 모든 파이프라인을 네 가지 노드로 그립니다.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -109,7 +107,7 @@ i18n_id: loops-and-graphs
     <div class="lg-card">
       <p class="lg-k">Splitter</p>
       <p class="lg-h">분할</p>
-      <p>맨 앞에서 작업을 자릅니다. 가장 먼저 정해야 하는 결정입니다. 폴더가 아니라 영향 범위(blast radius)를 기준으로 자릅니다.</p>
+      <p>맨 앞에서 작업을 자릅니다. 가장 중요한 결정입니다. 폴더가 아니라 영향 범위(blast radius)를 기준으로 자릅니다.</p>
     </div>
     <div class="lg-card">
       <p class="lg-k">Worker</p>
@@ -131,10 +129,10 @@ i18n_id: loops-and-graphs
 {:/nomarkdown}
 
 {::nomarkdown}
-<div class="lg-guide"><div class="lg-hint"><p>그 단계를 “판단, 결정, 평가, 요약” 같은 말 없이 설명할 수 있으면, 모델이 아니라 코드로 만드는 편이 맞습니다.</p></div></div>
+<div class="lg-guide"><div class="lg-hint"><p>그 단계를 “판단, 결정, 평가, 요약” 같은 말 없이 설명할 수 있으면, 모델이 아니라 코드로 만듭니다.</p></div></div>
 {:/nomarkdown}
 
-워커는 같은 대화 안에서 서브태스크로 돌리지 않습니다. 서브에이전트를 각각 띄우고, 컨텍스트를 나눕니다.
+워커마다 컨텍스트를 따로 줍니다. 같은 대화 안에서 서브태스크를 돌리지 말고, 서브에이전트를 각각 띄웁니다.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -192,7 +190,7 @@ i18n_id: loops-and-graphs
 
 짧은 길은 수정 엣지입니다. 게이트가 실패한 단위를, 그 단위를 만든 단계로 돌려보냅니다. 이번 실행을 고칩니다.
 
-긴 길은 학습 엣지입니다. 통과된 결과에서 제약 조건을 뽑아 분할 단계의 브리프에 넣습니다. 이후 실행을 고칩니다. 이 길을 빼먹기 쉽습니다.
+긴 길은 학습 엣지입니다. 통과된 결과에서 제약 조건을 뽑아 분할 단계(splitter)의 브리프에 넣습니다. 이후 모든 실행을 고칩니다. 대부분 이 길을 빼먹습니다.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -231,9 +229,19 @@ i18n_id: loops-and-graphs
 </div>
 {:/nomarkdown}
 
-원문에 나온 예는 이렇습니다. utils 슬라이스가 첫 시도에 통과했을 때, “adapters는 keyword args를 정확히 보존한다”는 제약을 뽑아 다음 분할 브리프에 넣습니다. Claude Code에서는 그 한 줄을 CLAUDE.md의 Learned constraints에 쌓으면 됩니다.
+예를 하나 들면, utils 슬라이스가 첫 시도에 통과했다고 합시다. 거기서 “adapters는 keyword args를 정확히 보존한다”는 제약을 뽑아, 이후 모든 슬라이스의 splitter 브리프에 넣습니다.
 
-실패한 단위만 돌려보냅니다. 넷 중 하나가 실패했으면 그 하나만 다시 합니다. 전체를 다시 쓰면, 이미 통과한 셋이 다르게 다시 쓰이고 결과가 모이지 않습니다.
+```
+ACCEPTED   utils slice ported, green on first pass
+DERIVED    adapters preserve keyword args exactly
+LANDS IN   the splitter's brief for every later slice
+```
+
+Claude Code에서는 이 DERIVED 한 줄을 CLAUDE.md의 Learned constraints에 쌓으면 됩니다.
+
+## 실패한 단위만 돌려보낸다
+
+넷 중 하나가 실패했으면 그 하나만 돌려보냅니다. 전체를 돌려보내면 멀쩡했던 셋이 다르게 다시 쓰이고, 결과가 수렴하지 않습니다.
 
 {::nomarkdown}
 <div class="lg-guide">
@@ -243,7 +251,7 @@ i18n_id: loops-and-graphs
     <div class="lg-slice"><span>adapters slice 3</span><span>→ </span></div>
     <div class="lg-slice"><span>models slice 4</span><span>→ </span></div>
   </div>
-  <p class="lg-cap">실패한 handlers만 게이트로 돌아갑니다. 나머지 셋은 그대로 둡니다.</p>
+  <p class="lg-cap">게이트는 실패한 handlers만, 그 단위를 만든 단계로 돌려보냅니다. 나머지 셋은 그대로 둡니다.</p>
 </div>
 {:/nomarkdown}
 
@@ -259,7 +267,7 @@ SCOPE     fix this file only, do not touch other slices
 
 SCOPE가 없으면 수정 범위가 번집니다. 결국 아무도 리뷰하지 않은 큰 diff가 됩니다.
 
-같은 단위가 세 번 실패하면, 단위 문제가 아니라 분할이 잘못된 쪽에 가깝습니다. 그때는 사람에게 올립니다.
+재시도는 최대 3회입니다. 세 번 실패하면 단위가 아니라 분할(splitter)이 잘못된 계획 문제이니, 사람에게 올립니다.
 
 ## 영향이 큰 자리에만 들어간다
 
@@ -440,8 +448,8 @@ ATTEMPT   &lt;n&gt; / 3
 
 ## 출처
 
-- **원문**: Hanako(@hanakoxbt), “Loops and Graphs” — [https://x.com/hanakoxbt/status/2091515787366306154](https://x.com/hanakoxbt/status/2091515787366306154)
-- **이 글의 성격**: 원문을 읽고 제 말로 정리한 블로그 글입니다. 원문 전체의 번역이 아니며, 정리 과정에서 생긴 오류는 이쪽의 몫입니다.
-- **작성자**: 우빈(Srevil)
-- **작성 도구**: Claude와 함께 작성했습니다.
-- **다이어그램**: 우빈이 예전에 만든 HTML 가이드(`Loops-and-Graphs.html`)에서 Loop·Graph 애니메이션과, 설명을 돕는 도해·템플릿을 가져와 이 글에 맞게 다듬었습니다.
+- 원문: Hanako(@hanakoxbt), “Loops and Graphs”, [https://x.com/hanakoxbt/status/2091515787366306154](https://x.com/hanakoxbt/status/2091515787366306154)
+- 이 글의 성격: 원문을 읽고 제 말로 정리한 블로그 글입니다. 원문 전체의 번역이 아니며, 정리 과정에서 생긴 오류는 이쪽의 몫입니다.
+- 작성자: 우빈(Srevil)
+- 작성 도구: Claude와 함께 작성했습니다.
+- 다이어그램: 우빈이 예전에 만든 HTML 가이드(`Loops-and-Graphs.html`)에서 Loop·Graph 애니메이션과, 설명을 돕는 도해·템플릿을 가져와 이 글에 맞게 다듬었습니다.
