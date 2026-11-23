@@ -1,4 +1,4 @@
-/* Loops & Graphs 글 전용. .lg-guide가 있을 때만 동작. Loop/Graph 다이어그램과 스크롤 리빌만 남김. */
+/* Loops & Graphs 글 전용. .lg-guide가 있을 때만 동작. */
 (function(){
   var guides = document.querySelectorAll('.lg-guide');
   if (!guides.length) return;
@@ -6,6 +6,34 @@
   var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function $(s, el){ return (el || document).querySelector(s); }
   function $$(s, el){ return Array.prototype.slice.call((el || document).querySelectorAll(s)); }
+  var LANG = ((document.documentElement.lang || '') + '').toLowerCase().indexOf('en') === 0 ? 'en' : 'ko';
+  var I18N = {
+    ko: {
+      fail: '실패', pass: '통과', wait: '대기',
+      stFail: '$ npm test → 실패',
+      stPass: '$ npm test → 통과',
+      stWait: '$ npm test → 대기',
+      fakeEdge: '가짜 엣지',
+      timePar: '워커 3개가 동시에 돌아요: 1 단위 시간',
+      timeFake: 'utils → handlers, handlers → adapters 사이로 넘어가는 변수가 없어요',
+      timeSer: '워커 3개가 차례로 돌아요: 3 단위 시간',
+      copied: '복사됨',
+      copy: '복사'
+    },
+    en: {
+      fail: 'Fail', pass: 'Pass', wait: 'Waiting',
+      stFail: '$ npm test → fail',
+      stPass: '$ npm test → pass',
+      stWait: '$ npm test → waiting',
+      fakeEdge: 'fake edge',
+      timePar: '3 workers in parallel: 1 time unit',
+      timeFake: 'no variable passes from utils → handlers, or handlers → adapters',
+      timeSer: '3 workers in sequence: 3 time units',
+      copied: 'Copied',
+      copy: 'Copy'
+    }
+  };
+  var T = I18N[LANG];
 
   /* ---------- reveal ---------- */
   setTimeout(function(){
@@ -42,7 +70,6 @@
   (function(){
     var svg = $('#loopSvg'); if (!svg) return;
     var C = 260, Y = 220, R = 160;
-    var pts = { P:[C,Y-R], C:[C+R,Y], F:[C,Y+R], R:[C-R,Y] };
     var ring = $('#ringP'), dot = $('#loopDot'), center = $('#loopCenter'), status = $('#loopStatus');
     var st = { P:$('#stP'), C:$('#stC'), F:$('#stF'), R:$('#stR') };
     var circ = 2 * Math.PI * R;
@@ -51,9 +78,9 @@
     function ease(x){ return x < .5 ? 2*x*x : 1 - Math.pow(-2*x+2, 2)/2; }
     function setCheck(c){
       ['P','C','F','R'].forEach(function(k){ st[k].classList.remove('on','red','green'); });
-      if (c === 'red'){ st.C.classList.add('red'); if (center) center.textContent = '실패'; if (status){ status.textContent = '$ npm test → 실패'; status.className = 'lg-status-pill red'; } }
-      else if (c === 'green'){ st.C.classList.add('green'); if (center) center.textContent = '통과'; if (status){ status.textContent = '$ npm test → 통과'; status.className = 'lg-status-pill green'; } }
-      else { if (center) center.textContent = '대기'; if (status){ status.textContent = '$ npm test → 대기'; status.className = 'lg-status-pill'; } }
+      if (c === 'red'){ st.C.classList.add('red'); if (center) center.textContent = T.fail; if (status){ status.textContent = T.stFail; status.className = 'lg-status-pill red'; } }
+      else if (c === 'green'){ st.C.classList.add('green'); if (center) center.textContent = T.pass; if (status){ status.textContent = T.stPass; status.className = 'lg-status-pill green'; } }
+      else { if (center) center.textContent = T.wait; if (status){ status.textContent = T.stWait; status.className = 'lg-status-pill'; } }
     }
     function draw(a){
       var m = (a % 360 + 360) % 360;
@@ -69,7 +96,6 @@
     function frame(ts){
       if (t0 === null) t0 = ts;
       var t = (ts - t0) / 1000;
-      // one slow orbit: produce → fail check → fix → produce → pass check, then hold
       var a;
       if (t < 2.2){ a = 90 * ease(t/2.2); setCheck(''); }
       else if (t < 3.2){ a = 90; setCheck('red'); }
@@ -100,7 +126,6 @@
       { id:'W2', l:'worker 2', c:'#30d158', x:560, y:160 },
       { id:'W3', l:'worker 3', c:'#30d158', x:560, y:250 }
     ];
-    var nMap = {}; nodes.forEach(function(n){ nMap[n.id] = n; });
     var lin = { U:[70,160], H:[230,160], A:[390,160], W1:[560,70], W2:[560,160], W3:[560,250] };
     var par = { U:[90,80], H:[90,160], A:[90,240], W1:[420,80], W2:[420,160], W3:[420,240] };
     var pos = JSON.parse(JSON.stringify(lin));
@@ -124,7 +149,7 @@
       p.setAttribute('marker-end', 'url(#dArr)');
       svg.appendChild(p); eEls[k] = p;
       var lb = document.createElementNS(NS, 'text');
-      lb.setAttribute('class', 'lg-elabel'); lb.textContent = '가짜 엣지'; lb.style.opacity = 0;
+      lb.setAttribute('class', 'lg-elabel'); lb.textContent = T.fakeEdge; lb.style.opacity = 0;
       svg.appendChild(lb); lEls[k] = lb;
       var vl = document.createElementNS(NS, 'text');
       vl.setAttribute('class', 'lg-vlabel'); vl.style.opacity = 0;
@@ -163,9 +188,9 @@
         if (vEls[k]) vEls[k].style.opacity = (on && state>=1) ? 1 : 0;
       });
       var tb = $('#timeBar'), tt = $('#timeTxt');
-      if (state===2){ if (tb) tb.style.width = '38%'; if (tt) tt.textContent = '워커 3개가 동시에 돌아요: 1 단위 시간'; }
-      else if (state===1){ if (tb) tb.style.width = '100%'; if (tt) tt.textContent = 'utils → handlers, handlers → adapters 사이로 넘어가는 변수가 없어요'; }
-      else { if (tb) tb.style.width = '100%'; if (tt) tt.textContent = '워커 3개가 차례로 돌아요: 3 단위 시간'; }
+      if (state===2){ if (tb) tb.style.width = '38%'; if (tt) tt.textContent = T.timePar; }
+      else if (state===1){ if (tb) tb.style.width = '100%'; if (tt) tt.textContent = T.timeFake; }
+      else { if (tb) tb.style.width = '100%'; if (tt) tt.textContent = T.timeSer; }
     }
     function go(s){
       state = s; applyStyles();
@@ -190,5 +215,59 @@
       setTimeout(function(){ go(1); }, 1400);
       setTimeout(function(){ go(2); }, 3600);
     });
+  })();
+
+  /* ---------- copy buttons ---------- */
+  $$('.lg-copy[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var el = document.getElementById(btn.getAttribute('data-copy'));
+      if (!el) return;
+      var text = el.textContent;
+      function done(){
+        var prev = btn.textContent;
+        btn.textContent = T.copied;
+        setTimeout(function(){ btn.textContent = prev; }, 1400);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(function(){ fallback(); });
+      } else { fallback(); }
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta); done();
+      }
+    });
+  });
+
+  /* ---------- checklist ---------- */
+  (function(){
+    var ul = $('[data-lg-checklist]'); if (!ul) return;
+    var boxes = $$('input[type="checkbox"]', ul);
+    var bar = $('[data-cl-bar]');
+    var count = $('[data-cl-count]');
+    var reset = $('[data-cl-reset]');
+    var KEY = 'srevil.lg.checklist.v1.' + LANG;
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
+    boxes.forEach(function(b, i){ if (saved[i]) b.checked = true; });
+    function upd(){
+      var n = 0;
+      boxes.forEach(function(b){ if (b.checked) n++; });
+      if (bar) bar.style.width = (boxes.length ? (n / boxes.length * 100) : 0) + '%';
+      if (count) count.textContent = n + ' / ' + boxes.length;
+    }
+    ul.addEventListener('change', function(){
+      var next = {};
+      boxes.forEach(function(b, i){ if (b.checked) next[i] = true; });
+      try { localStorage.setItem(KEY, JSON.stringify(next)); } catch (e) {}
+      upd();
+    });
+    if (reset) reset.addEventListener('click', function(){
+      boxes.forEach(function(b){ b.checked = false; });
+      try { localStorage.removeItem(KEY); } catch (e) {}
+      upd();
+    });
+    upd();
   })();
 })();
