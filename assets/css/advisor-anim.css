@@ -1,0 +1,112 @@
+/* advisor 글 전용 애니메이션 그림 (front matter: advisor_anim: true)
+   JS가 없거나 prefers-reduced-motion이면 완료 상태 그대로 보인다. */
+.adv-fig{--main:#8a97ff;--main-soft:rgba(138,151,255,.18);--strong:var(--claude);--strong-soft:rgba(217,119,87,.2);--ok:#7fd6a4;
+  margin:2.2em 0;padding:18px 20px 16px;border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));box-shadow:0 20px 50px -30px rgba(217,119,87,.35)}
+.adv-fig-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.adv-fig-k{font:700 12px var(--mono);letter-spacing:.04em;color:var(--muted)}
+.adv-fig-k b{color:var(--claude);font-weight:700}
+.adv-replay{display:none;font:600 12px var(--mono);color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer}
+.adv-fig.js .adv-replay{display:inline-block}
+.adv-replay:hover{color:var(--fg);border-color:rgba(255,255,255,.3)}
+.adv-fig figcaption{margin-top:12px;font-size:14.5px;line-height:1.65;color:#bdbac3}
+.adv-fig figcaption b{color:var(--fg)}
+.adv-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font:12px var(--mono);color:var(--muted)}
+.adv-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.adv-legend .lm{background:var(--main)}.adv-legend .ls{background:var(--strong)}.adv-legend .lc{background:rgba(255,255,255,.14)}.adv-legend .lk{width:8px;height:8px;border-radius:50%;background:var(--strong);box-shadow:0 0 8px rgba(217,119,87,.9)}
+
+/* ---------- 그림 1: 호출 흐름 (SVG) ---------- */
+.adv-flow svg{display:block;width:100%;height:auto;overflow:visible}
+.adv-flow text{font-family:var(--sans);fill:#d6d3cc}
+.adv-flow .mono{font-family:var(--mono)}
+.adv-flow .muted{fill:var(--muted)}
+.adv-flow .abox{fill:#15131a;stroke:rgba(217,119,87,.45);stroke-width:2;transition:fill .3s,stroke .3s}
+.adv-flow .abox.on{fill:#2a1a14;stroke:var(--strong);filter:drop-shadow(0 0 14px rgba(217,119,87,.55))}
+.adv-flow .track{stroke:rgba(255,255,255,.12);stroke-width:6;stroke-linecap:round}
+.adv-flow .prog{stroke:var(--main);stroke-width:6;stroke-linecap:round}
+.adv-flow .runner{fill:var(--main);filter:drop-shadow(0 0 8px rgba(138,151,255,.8))}
+.adv-flow .cp{fill:#15131a;stroke:rgba(255,255,255,.3);stroke-width:2}
+.adv-flow .cp.on{fill:var(--strong);stroke:var(--strong)}
+.adv-flow .cp.done{fill:var(--ok);stroke:var(--ok)}
+.adv-flow .wire{fill:none;stroke:rgba(217,119,87,.55);stroke-width:2;stroke-dasharray:6 6;opacity:.35;transition:opacity .3s}
+.adv-flow .wire.on{opacity:1}
+.adv-flow .pk rect{rx:9}
+.adv-flow .pk-up rect{fill:#2a1a14;stroke:var(--strong);stroke-width:1.5}
+.adv-flow .pk-dn rect{fill:#122219;stroke:var(--ok);stroke-width:1.5}
+.adv-flow .pk text{font-size:16px;font-weight:700;fill:var(--fg)}
+.adv-flow .st{font-size:19px;font-weight:700}
+.adv-flow .st.adv{fill:var(--strong)}.adv-flow .st.ok{fill:var(--ok)}
+.adv-cap-live{min-height:3.3em}
+
+/* ---------- 그림 2: 실행 로그 ---------- */
+.adv-clock{display:flex;align-items:baseline;gap:8px;font:13px var(--mono);color:var(--muted)}
+.adv-clock b{font:800 26px var(--mono);color:var(--fg);min-width:3.2em;text-align:right}
+.adv-timebar{position:relative;height:30px;margin:10px 0 4px;border-radius:8px;background:rgba(255,255,255,.05);overflow:hidden}
+.adv-timebar .seg{position:absolute;top:0;bottom:0;border-right:2px solid #0b0b0f}
+.adv-timebar .seg i{position:absolute;inset:0;transform-origin:left;background:var(--main)}
+.adv-timebar .seg.a i{background:var(--strong)}
+.adv-timebar .seg span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 12px var(--mono);color:#160d09;white-space:nowrap}
+.adv-ticks{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--muted)}
+.adv-log{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.adv-log li{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:baseline;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#0d0c11;transition:opacity .35s,transform .35s,border-color .35s}
+.adv-log li.hide{opacity:0;transform:translateY(6px)}
+.adv-log li.busy{border-color:rgba(217,119,87,.6)}
+.adv-log .t{font:12px var(--mono);color:var(--muted)}
+.adv-log code{font:700 13px var(--mono);background:none;padding:0;color:var(--main)}
+.adv-log li.a code{color:var(--strong)}
+.adv-log .d{grid-column:2;font-size:14px;color:#c9c6cf;line-height:1.5}
+.adv-log .lock{font:12px var(--mono);color:var(--muted);border:1px dashed rgba(255,255,255,.2);border-radius:6px;padding:0 6px;margin-left:4px;white-space:nowrap}
+.adv-log li.busy .d::after{content:"Advising…";margin-left:8px;font:700 12px var(--mono);color:var(--strong);animation:advBlink 1s steps(2) infinite}
+@keyframes advBlink{50%{opacity:.25}}
+.adv-cost{margin-top:16px;transition:opacity .4s}
+.adv-cost.hide{opacity:0}
+.adv-cost-k{display:flex;justify-content:space-between;font:12px var(--mono);color:var(--muted);margin-bottom:6px}
+.adv-costbar{display:flex;height:34px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.05)}
+.adv-costbar i{display:flex;align-items:center;justify-content:center;font:700 12.5px var(--mono);color:#120c0a;white-space:nowrap;overflow:hidden;transition:flex-basis .9s cubic-bezier(.3,.7,.2,1)}
+.adv-costbar .cm{flex-basis:31%;background:var(--main)}
+.adv-costbar .cs{flex-basis:69%;background:var(--strong)}
+.adv-cost.hide .adv-costbar i{flex-basis:0}
+
+/* ---------- 그림 3: 캐시 ---------- */
+.adv-cache .row{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:center;margin:8px 0}
+.adv-cache .rk{font:12px var(--mono);color:var(--muted);line-height:1.35}
+.adv-blocks{display:grid;grid-template-columns:repeat(9,1fr);gap:4px}
+.adv-blocks i{height:30px;border-radius:6px;background:rgba(255,255,255,.14);border:1.5px solid transparent;transition:background .3s,border-color .3s,opacity .3s,transform .3s}
+.adv-blocks i.off{opacity:0;transform:scale(.6)}
+.adv-blocks i.new{background:var(--main-soft);border-color:var(--main)}
+.adv-blocks i.read{background:var(--strong);border-color:var(--strong)}
+.adv-calls{display:grid;gap:5px}
+.adv-calls div{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.adv-calls .bar{height:14px;border-radius:5px;background:rgba(255,255,255,.05);overflow:hidden}
+.adv-calls .bar i{display:block;height:100%;background:var(--strong);transform-origin:left;transform:scaleX(var(--w,1));transition:transform .6s cubic-bezier(.3,.7,.2,1)}
+.adv-calls span{font:12px var(--mono);color:var(--muted);min-width:7.5em;text-align:right}
+.adv-calls div.off{opacity:.25}
+.adv-calls div.off .bar i{transform:scaleX(0)}
+
+/* ---------- 그림 4: 비교 ---------- */
+.adv-cmp .row{display:grid;grid-template-columns:132px 1fr;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.adv-cmp .row:first-of-type{border-top:0}
+.adv-cmp .rn{font:700 13.5px var(--mono);color:var(--fg);line-height:1.3}
+.adv-cmp .rn small{display:block;margin-top:3px;font:500 11.5px var(--sans);color:var(--muted)}
+.adv-cmp .who{display:inline-block;margin-top:4px;font:600 11px var(--mono);padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.adv-cmp .who.c{color:var(--strong);border-color:rgba(217,119,87,.45)}
+.adv-cells{display:grid;grid-template-columns:repeat(12,1fr);gap:3px}
+.adv-cells i{position:relative;height:26px;border-radius:5px;background:var(--main);transition:opacity .25s,background .25s}
+.adv-cells i.s{background:var(--strong)}
+.adv-cells i.k::after{content:"";position:absolute;left:50%;top:-5px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--strong);box-shadow:0 0 10px rgba(217,119,87,.9)}
+.adv-cells i.k{background:linear-gradient(180deg,var(--strong) 0 45%,var(--main) 45%)}
+.adv-cells i.dim{opacity:.12}
+.adv-cells i.dim::after{opacity:0}
+.adv-cmp .axis{display:grid;grid-template-columns:132px 1fr;gap:12px;font:11px var(--mono);color:var(--muted);margin-top:4px}
+.adv-cmp .axis span:last-child{display:flex;justify-content:space-between}
+
+@media(max-width:560px){
+  .adv-fig{padding:14px 12px 12px;margin-left:-6px;margin-right:-6px}
+  .adv-cmp .row,.adv-cmp .axis{grid-template-columns:96px 1fr;gap:8px}
+  .adv-cmp .rn{font-size:12px}
+  .adv-cells{gap:2px}
+  .adv-cells i{height:22px;border-radius:4px}
+  .adv-cache .row{grid-template-columns:70px 1fr}
+  .adv-costbar i{font-size:11px}
+}
+@media (prefers-reduced-motion: reduce){.adv-log li.busy .d::after{animation:none}}

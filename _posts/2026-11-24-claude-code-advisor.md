@@ -6,6 +6,7 @@ description: 클로드 코드 advisor는 Claude가 작업 중 더 강한 모델�
 permalink: /posts/claude-code-advisor/
 lang: ko
 i18n_id: claude-code-advisor
+advisor_anim: true
 ---
 
 Claude Code를 쓰다 보면 모델 고르는 일이 은근히 피곤합니다. 비싼 모델을 계속 쓰자니 부담이고, 빠른 모델로 가자니 계획이 허술해질 것 같습니다. 그런 고민 끝에 공식 문서에서 클로드 코드 advisor, 즉 Claude Code `/advisor` 항목을 읽고 정리했고, 직접 한 번 실행해 로그도 확인했습니다.
@@ -33,6 +34,34 @@ Claude Code 슬래시 명령어로는 `/advisor`가 이 기능의 입구입니�
 2. 접근 방식을 확정하기 전, 반복되는 오류에 막혔을 때, 작업 완료를 선언하기 전 같은 시점에 Claude가 advisor를 부릅니다.
 3. advisor는 모든 도구 호출과 결과를 포함한 **전체 대화**를 받습니다.
 4. advisor가 지침을 돌려주면 Claude가 그것을 반영해 작업을 이어 갑니다.
+
+{::nomarkdown}
+<figure class="adv-fig adv-flow" id="advFlow">
+<div class="adv-fig-head"><span class="adv-fig-k"><b>그림 1</b> · advisor를 부르는 흐름</span><button class="adv-replay" type="button">다시 재생 ↻</button></div>
+<svg viewBox="0 0 560 330" role="img" aria-label="메인 모델 Sonnet이 작업하는 선 위에 세 개의 결정 시점이 있고, 각 시점에서 전체 대화가 위쪽의 advisor Opus로 올라갔다가 지침이 되어 돌아오는 그림">
+<rect class="abox" x="170" y="14" width="220" height="70" rx="16"/>
+<text x="280" y="43" text-anchor="middle" class="mono muted" font-size="15">advisor</text>
+<text x="280" y="70" text-anchor="middle" font-size="22" font-weight="800">Opus</text>
+<text class="st ok" x="280" y="114" text-anchor="middle">작업 완료 · 호출 3번</text>
+<path class="wire" d="M170 236 Q170 110 280 84"/>
+<path class="wire" d="M320 236 Q320 110 280 84"/>
+<path class="wire" d="M470 236 Q470 110 280 84"/>
+<text x="30" y="214" font-size="20" font-weight="700" style="fill:#8a97ff">메인 · Sonnet</text>
+<line class="track" x1="30" y1="250" x2="530" y2="250"/>
+<line class="prog" x1="30" y1="250" x2="530" y2="250"/>
+<rect class="cp done" x="161" y="241" width="18" height="18" transform="rotate(45 170 250)"/>
+<rect class="cp done" x="311" y="241" width="18" height="18" transform="rotate(45 320 250)"/>
+<rect class="cp done" x="461" y="241" width="18" height="18" transform="rotate(45 470 250)"/>
+<text x="170" y="292" text-anchor="middle" font-size="19">접근 방식</text><text x="170" y="316" text-anchor="middle" font-size="19">확정 전</text>
+<text x="320" y="292" text-anchor="middle" font-size="19">같은 오류에</text><text x="320" y="316" text-anchor="middle" font-size="19">막힐 때</text>
+<text x="470" y="292" text-anchor="middle" font-size="19">완료</text><text x="470" y="316" text-anchor="middle" font-size="19">선언 전</text>
+<circle class="runner" cx="530" cy="250" r="10"/>
+<g class="pk pk-up" opacity="0"><rect x="-40" y="-16" width="80" height="32"/><text y="5" text-anchor="middle">전체 대화</text></g>
+<g class="pk pk-dn" opacity="0"><rect x="-30" y="-16" width="60" height="32"/><text y="5" text-anchor="middle">지침</text></g>
+</svg>
+<figcaption class="adv-cap-live">세 시점은 규칙이 아니라 Claude가 부르는 <b>경향</b>입니다. 호출 횟수를 제한하거나 강제하는 설정은 없고, 사용자가 정하는 것은 <b>어떤 모델을 advisor로 쓸지</b>뿐입니다.</figcaption>
+</figure>
+{:/nomarkdown}
 
 몇 가지는 처음 읽을 때 놓치기 쉬워서 따로 적어 둡니다.
 
@@ -125,6 +154,30 @@ claude -p --model sonnet --advisor opus --output-format stream-json --verbose \
 - advisor인 Opus는 입력 약 2.3만 토큰을 캐시 없이 새로 처리했습니다. 문서가 말한 "advisor가 대화를 읽는 부분은 캐시되지 않는다"와 일치합니다.
 - `modelUsage` 기준 비용은 Sonnet이 약 $0.050, Opus가 약 $0.111, 합계 약 $0.161입니다. 호출은 한 번뿐이었는데도 비용의 약 69%가 advisor 쪽이었습니다.
 
+{::nomarkdown}
+<figure class="adv-fig adv-run" id="advRun">
+<div class="adv-fig-head"><span class="adv-fig-k"><b>그림 2</b> · 실행 한 번을 다시 재생</span><button class="adv-replay" type="button">다시 재생 ↻</button></div>
+<div class="adv-clock"><span>경과</span><b data-clock>16.6</b><span>초 / 16.6초</span></div>
+<div class="adv-timebar" aria-hidden="true">
+<div class="seg" style="left:0;width:6%" data-s="0" data-e="1"><i></i></div>
+<div class="seg a" style="left:6%;width:90.4%" data-s="1" data-e="16"><i></i><span>advisor · Opus ≈ 15초</span></div>
+<div class="seg" style="left:96.4%;width:3.6%" data-s="16" data-e="16.6"><i></i></div>
+</div>
+<div class="adv-ticks" aria-hidden="true"><span>0초</span><span>16.6초</span></div>
+<ol class="adv-log">
+<li data-at="0.3"><span class="t">Sonnet</span><code>message</code><span class="d">advisor를 부르기로 결정 (출력 26토큰)</span></li>
+<li class="a" data-at="1" data-busy="16"><span class="t">서버</span><code>server_tool_use</code><span class="d">name은 advisor, input은 비어 있음</span></li>
+<li class="a" data-at="16"><span class="t">Opus</span><code>advisor_tool_result</code><span class="d">advisor_redacted_result <span class="lock">암호화된 본문</span></span></li>
+<li data-at="16.6"><span class="t">Sonnet</span><code>message</code><span class="d">조언을 반영해 한국어 5개 항목으로 최종 답 (출력 575토큰)</span></li>
+</ol>
+<div class="adv-cost">
+<div class="adv-cost-k"><span>비용 분배 · API 정가 환산</span><span>합계 ≈ $0.161</span></div>
+<div class="adv-costbar"><i class="cm">Sonnet $0.050</i><i class="cs">Opus $0.111 · 69%</i></div>
+</div>
+<figcaption>위 로그를 시간 순서대로 다시 그렸습니다. 16.6초 중 약 15초가 advisor 구간이었고, Opus는 입력 23,161토큰을 캐시 없이 새로 처리했습니다. 앞뒤 Sonnet 구간(합계 약 1.6초)의 나눔은 대략으로 그렸고, 달러는 구독 요금제의 실제 청구액이 아닙니다.</figcaption>
+</figure>
+{:/nomarkdown}
+
 주의할 점은 `modelUsage`의 각 항목에 붙은 `costBasis: "list"`입니다. 이는 실제 청구액이 아니라 **API 정가 기준으로 환산한 값**입니다. 구독 요금제에서는 이 금액이 청구되지 않고, 비용 절에서 인용한 대로 사용량이 플랜 한도에 합산됩니다. 그러니 이 숫자는 메인과 advisor의 상대적 무게를 보는 용도로 읽는 게 맞습니다.
 
 짧은 실행 한 번이고 메인의 컨텍스트에 시스템 프롬프트와 도구 정의가 이미 약 2만 토큰 들어 있던 환경이라, 이 비율을 일반화하기는 어렵습니다. 대화가 길어질수록 advisor 한 번의 입력 비용이 커진다는 방향 정도만 읽어 두었습니다.
@@ -166,6 +219,20 @@ consult the advisor before you continue
 - 세션 중에 advisor를 켜고 꺼도 메인 모델의 prompt cache는 무효화되지 않습니다. 모델을 바꾸는 것과 다른 점입니다.
 - 반대로 advisor 모델이 대화를 읽는 부분은 캐시되지 않고, 호출할 때마다 전체 트랜스크립트를 새로 처리합니다. 대화가 길수록 한 번의 호출이 무거워진다는 뜻으로 읽었습니다.
 
+{::nomarkdown}
+<figure class="adv-fig adv-cache" id="advCache">
+<div class="adv-fig-head"><span class="adv-fig-k"><b>그림 3</b> · advisor는 부를 때마다 처음부터 읽는다 (개념도)</span><button class="adv-replay" type="button">다시 재생 ↻</button></div>
+<div class="row"><span class="rk">대화<br>턴 9개</span><div class="adv-blocks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="new"></i></div></div>
+<div class="row"><span class="rk">advisor<br>입력량</span><div class="adv-calls">
+<div><div class="bar"><i style="--w:.3333"></i></div><span>1번째 · 3턴</span></div>
+<div><div class="bar"><i style="--w:.6667"></i></div><span>2번째 · 6턴</span></div>
+<div><div class="bar"><i style="--w:1"></i></div><span>3번째 · 9턴</span></div>
+</div></div>
+<div class="adv-legend"><span><i class="lc"></i>메인: 캐시로 재사용</span><span><i class="lm"></i>메인: 새로 처리</span><span><i class="ls"></i>advisor가 읽는 범위</span></div>
+<figcaption>메인 모델은 앞부분을 prompt cache로 재사용하고 새 턴만 처리하지만, advisor는 호출할 때마다 <b>전체 트랜스크립트</b>를 새로 처리합니다. 그래서 같은 한 번의 호출이라도 대화가 길어질수록 입력이 커집니다. 블록 수는 설명용이며 실제 토큰 수가 아닙니다.</figcaption>
+</figure>
+{:/nomarkdown}
+
 Fable advisor는 플랜에 따라 usage credits로 청구되는 점도 기억해 두면 좋습니다. 앞 절 실행 로그의 달러 금액은 API 정가 환산치(`costBasis: "list"`)이니, 구독에서의 실제 부담과는 구분해서 보세요.
 
 ## 쓸 때와 안 써도 될 때
@@ -188,6 +255,19 @@ Fable advisor는 플랜에 따라 usage credits로 청구되는 점도 기억해
 | `/model` | 다음 요청부터 | 사용자가 모델 전환 |
 
 차이를 한 줄로 줄이면, `opusplan`은 **내가 plan 모드에 들어가면** 강한 모델이 계획을 맡고, advisor는 **Claude가 필요하다고 판단할 때** 강한 모델에게 묻는 방식입니다. 시작 버튼을 누르는 쪽이 다릅니다.
+
+{::nomarkdown}
+<figure class="adv-fig adv-cmp" id="advCmp">
+<div class="adv-fig-head"><span class="adv-fig-k"><b>그림 4</b> · 강한 모델은 언제 도는가</span><button class="adv-replay" type="button">다시 재생 ↻</button></div>
+<div class="row"><div class="rn">advisor<small>결정 시점에만 잠깐</small><span class="who c">Claude가 호출</span></div><div class="adv-cells"><i></i><i></i><i class="k"></i><i></i><i></i><i></i><i class="k"></i><i></i><i></i><i></i><i></i><i class="k"></i></div></div>
+<div class="row"><div class="rn">opusplan<small>plan 모드 동안</small><span class="who">사용자가 진입</span></div><div class="adv-cells"><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+<div class="row"><div class="rn">서브에이전트<small>맡긴 하위 작업 전체</small><span class="who c">Claude·사용자</span></div><div class="adv-cells"><i></i><i></i><i></i><i></i><i></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i></i><i></i><i></i></div></div>
+<div class="row"><div class="rn">/model<small>다음 요청부터 계속</small><span class="who">사용자가 전환</span></div><div class="adv-cells"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i></div></div>
+<div class="axis" aria-hidden="true"><span></span><span><span>작업 시작</span><span>시간(턴) →</span></span></div>
+<div class="adv-legend"><span><i class="lm"></i>메인(빠른) 모델</span><span><i class="ls"></i>강한 모델</span><span><i class="lk"></i>advisor 호출</span></div>
+<figcaption>한 칸이 한 턴입니다. advisor만 <b>Claude가 필요하다고 판단한 순간</b>에 강한 모델이 잠깐 끼어들고, 나머지는 사용자의 조작이나 위임으로 강한 모델이 도는 구간이 정해집니다. 칸의 위치와 길이는 예시이고, <code>/model</code>은 강한 모델로 바꿨다고 가정했습니다.</figcaption>
+</figure>
+{:/nomarkdown}
 
 문서가 소개하는 대표 조합도 적어 둡니다.
 
